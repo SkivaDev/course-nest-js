@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { createTaskDto } from "./dto/task.dto";
+import { createTaskDto, updateTaskDto } from "./dto/task.dto";
 
 export interface Task {
     id: number;
@@ -50,5 +50,24 @@ export class TasksService {
         };
         this.tasks.push(newTask);
         return newTask;
+    }
+
+    updateTask(id: number, updatedFields: updateTaskDto): any {
+
+        const task = this.tasks.find(task => task.id === id);
+
+        if (!task) {
+            return new NotFoundException(`Task with ID ${id} not found`);
+        }
+
+        const updatedTask = {
+            ...task,
+            ...updatedFields
+        };
+
+        this.tasks = this.tasks.map(task => task.id === id ? updatedTask : task);
+
+        return updatedTask;
+
     }
 }

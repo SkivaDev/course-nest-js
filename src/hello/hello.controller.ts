@@ -1,5 +1,6 @@
-import { Controller, Get, HttpCode, Req, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param, ParseBoolPipe, ParseIntPipe, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { get } from 'http';
 
 @Controller('')
 export class HelloController {
@@ -18,5 +19,21 @@ export class HelloController {
   @HttpCode(500)
   errorPage() {
     return { message: 'Error route!!!' };
+  }
+
+  @Get('/ticket/:num')
+  getNumber(@Param('num', ParseIntPipe) num: number) {
+    return num + 20;
+  }
+
+  @Get('/active/:status')
+  isUserActive(@Param('status', ParseBoolPipe) status: boolean) {
+    return status ? 'User is active' : 'User is not active';
+  }
+
+  @Get('/redirect')
+  @HttpCode(301)
+  redirectPage(@Res() response: Response) {
+    response.redirect('/notfound');
   }
 }

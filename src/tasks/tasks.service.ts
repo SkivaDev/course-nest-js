@@ -1,73 +1,76 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { createTaskDto, updateTaskDto } from "./dto/task.dto";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { createTaskDto, updateTaskDto } from './dto/task.dto';
 
 export interface Task {
-    id: number;
-    title: string;
-    description: string;
-    done: boolean;
+  id: number;
+  title: string;
+  description: string;
+  done: boolean;
 }
 
 @Injectable()
 export class TasksService {
+  private tasks: Task[] = [
+    {
+      id: 1,
+      title: 'Task 1',
+      description: 'Description 1',
+      done: true,
+    },
+    {
+      id: 2,
+      title: 'Task 2',
+      description: 'Description 2',
+      done: false,
+    },
+    {
+      id: 3,
+      title: 'Task 3',
+      description: 'Description 3',
+      done: false,
+    },
+  ];
 
-    private tasks: Task[] = [{
-        id: 1,
-        title: 'Task 1',
-        description: 'Description 1',
-        done: true
-    }, {
-        id: 2,
-        title: 'Task 2',
-        description: 'Description 2',
-        done: false
-    }, {
-        id: 3,
-        title: 'Task 3',
-        description: 'Description 3',
-        done: false
-    }];
+  getTasks(): Task[] {
+    return this.tasks;
+  }
 
-    getTasks(): Task[] {
-        return this.tasks;
+  getTaskById(id: number): any {
+    const task = this.tasks.find((task) => task.id === id);
+
+    if (!task) {
+      return new NotFoundException(`Task with ID ${id} not found`);
     }
 
-    getTaskById(id: number): any {
-        const task = this.tasks.find(task => task.id === id);
+    return task;
+  }
 
-        if (!task) {
-            return new NotFoundException(`Task with ID ${id} not found`);
-        }
+  createTask(task: createTaskDto): Task {
+    const newTask = {
+      id: this.tasks.length + 1,
+      done: false,
+      ...task,
+    };
+    this.tasks.push(newTask);
+    return newTask;
+  }
 
-        return task;
+  updateTask(id: number, updatedFields: updateTaskDto): any {
+    const task = this.tasks.find((task) => task.id === id);
+
+    if (!task) {
+      return new NotFoundException(`Task with ID ${id} not found`);
     }
 
-    createTask(task: createTaskDto): Task {
-        const newTask = {
-            id: this.tasks.length + 1,
-            done: false, 
-            ...task
-        };
-        this.tasks.push(newTask);
-        return newTask;
-    }
+    const updatedTask = {
+      ...task,
+      ...updatedFields,
+    };
 
-    updateTask(id: number, updatedFields: updateTaskDto): any {
+    this.tasks = this.tasks.map((task) =>
+      task.id === id ? updatedTask : task,
+    );
 
-        const task = this.tasks.find(task => task.id === id);
-
-        if (!task) {
-            return new NotFoundException(`Task with ID ${id} not found`);
-        }
-
-        const updatedTask = {
-            ...task,
-            ...updatedFields
-        };
-
-        this.tasks = this.tasks.map(task => task.id === id ? updatedTask : task);
-
-        return updatedTask;
-
-    }
+    return updatedTask;
+  }
 }

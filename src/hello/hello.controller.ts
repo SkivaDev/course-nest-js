@@ -1,6 +1,7 @@
-import { Controller, Get, HttpCode, Param, ParseBoolPipe, ParseIntPipe, Req, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param, ParseBoolPipe, ParseIntPipe, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { get } from 'http';
+import { AuthGuard } from './guards/auth/auth.guard';
 
 @Controller('')
 export class HelloController {
@@ -27,6 +28,7 @@ export class HelloController {
   }
 
   @Get('/active/:status')
+  @UseGuards(AuthGuard) // UseGuard sirve para proteger las rutas de los usuarios no autorizados
   isUserActive(@Param('status', ParseBoolPipe) status: boolean) {
     return status ? 'User is active' : 'User is not active';
   }

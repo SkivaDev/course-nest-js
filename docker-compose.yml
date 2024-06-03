@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: skivadev
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mynestjsdb
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

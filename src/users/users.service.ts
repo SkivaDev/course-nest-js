@@ -17,4 +17,9 @@ export class UsersService {
   getUsers(): any[] {
     return this.users;
   }
+
+  createUser(user: any): any {
+    this.users.push(user);
+    return user;
+  }
 }
